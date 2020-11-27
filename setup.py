@@ -5,7 +5,7 @@ with open("README.md") as readme_file:
 
 setup_args = dict(
     name="region_grow",
-    version="1.0.0",
+    version="0.0.1",
     description="Creates a new polygon locally given a set of points using a region grow algorithm approach and a satellite image in GeoTIFF format. The polygon output format is ESRI Shapefile",
     long_description_content_type="text/markdown",
     long_description=README,
@@ -24,7 +24,7 @@ setup_args = dict(
     python_requires=">=3.7",
 )
 
-install_requires = ["tk", "numpy", "pandas", "scipy" "rasterio", "geopandas", "shapely"]
+install_requires = ["Shapely", "numpy", "pandas", "scipy", "rasterio", "geopandas"]
 
 if __name__ == "__main__":
     setup(**setup_args, install_requires=install_requires)
