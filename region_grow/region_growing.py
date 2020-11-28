@@ -11,9 +11,9 @@ import numpy as np
 import pandas as pd
 
 # Modulos propios
-import region_grow.classifiers as classifiers
-import region_grow.functions as functions
-import region_grow.region as rg
+from . import classifiers as classifiers
+from . import functions as functions
+from . import region as rg
 
 
 def archivo_cargar(files: list):

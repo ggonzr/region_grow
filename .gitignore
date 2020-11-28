@@ -3,3 +3,4 @@ region_grow/__pycache__
 build/
 dist/
 *.egg-info/
+.ipynb_*/
