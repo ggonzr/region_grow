@@ -2,6 +2,14 @@
 
 Creates a polygon using a set of points from a region of interest by grouping pixels whose spectral reflectance is similar. The polygons are created using a satellite image in GeoTIFF format. In this project several algorithms are implemented to build this figure. Among them are: Selection by similarity threshold (%), Euclidean distance and selection by confidence interval. The generated polygon is exported in ESRI Shapefile format.
 
+## Installation
+
+You can install this package from PyPi.
+
+```python
+pip install region-grow
+```
+
 ## Create a new polygon
 
 Today, we are going to calculate a polygon for a sugar cane crop located in Boyaca, Colombia. The input data is a set of points near to the crop and the main goal is to find the mininum polygon which covers all the crop area only using a little number of the given examples and a satellite image. The satellite image is a 3 band raster of a Sentinel 2A scene. The bands we use are: Band 11 (Short Wave Infrared - I), Band 8 (Near Infrared) and Band 2 (Blue). The cell resolution is 10m X 10m per pixel. For band 11 we made a resampling process using a bilinear transformation.
