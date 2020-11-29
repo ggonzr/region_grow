@@ -1,5 +1,6 @@
 """
-Funciones a utilizar para realizar el proceso de Region Growing
+Functions to be used to perform the Region Growing process
+
 """
 
 # Librerias
@@ -17,22 +18,22 @@ from region_grow.classifiers import Classifier, select_balanced_classifier
 # Cargar un raster .tif
 def cargar_raster(ruta_archivo: str):
     """
-    Carga un raster de una imagen satelital en formato .tif y reestructura la imagen en 1-D
-    para ser procesada posteriormente.
+    Loads a raster of a satellite image in .tif format and restructures the image in 1-D
+    to be processed later.
 
     Parameters
     --------------
-    ruta_archivo: str
-        Ruta de localizacion de la imagen
+    file_path: str
+        Image location route
 
     Return
     --------------
     img_1d: ndarray
-        Imagen con dimensiones de alto y ancho re-estructuradas en una sola dimensión R^2 => R
+        Image with height and width dimensions restructured into one dimension R^2 => R
     img_array: ndarray
-        Imagen con dimensiones originales
+        Image with original dimensions
     metadata: rasterio.meta
-        Metadatos del raster cargado
+        Metadata of the loaded raster
 
     """
     with rio.open(ruta_archivo) as raster:
@@ -61,22 +62,22 @@ def cargar_raster(ruta_archivo: str):
 # Consultar las posiciones en el arreglo leido del raster según las cordenadas del pixel
 def append_xy_index(df: pd.DataFrame, raster_path: str) -> pd.DataFrame:
     """
-    Dado un Dataframe (pandas), permite agregar dos nuevas
-    columnas que indican los indices en el arreglo que corresponden
-    al pixel
+    Given a Dataframe (pandas), it allows to add two new
+    columns indicating the corresponding indexes in the arrangement
+    to the pixel
 
     Parameters
     --------------
     df: pandas.DataFrame
-        Dataframe con la información de las cordenadas de los puntos
+        Dataframe with the information of the coordinates of the points
     raster_path: str
-        Ruta completa del archivo raster con la informacion espectral
+        Complete raster file path with spectral information
 
     Return
     --------------
     df_rsp: pandas.DataFrame
-        Dataframe con las coordenadas del pixel expresadas en su posición
-        X, Y en el arreglo de datos.
+        Dataframe with the pixel coordinates expressed in its position
+        X, Y in the data arrangement.
 
     """
     with rio.open(raster_path) as raster:
@@ -99,32 +100,32 @@ def check_hood(
     confirmed_pixels: set,
 ) -> list:
     """
-    Realiza un recorrido sobre los 8 vecinos alrededor de un pixel dadas
-    sus indices X,Y en el arreglo de datos
+    It makes a route on the 8 neighbors around a given pixel
+    its X,Y indexes in the data arrangement
 
     Parameters
     --------------
     pixel_cords: (int, int)
-        Coordenadas X,Y del pixel en el arreglo de datos
+        X,Y coordinates of the pixel in the data array
     data_array: numpy.ndarray
-        Arreglo con todas la información espectral de un pixel
+        Arrangement with all one pixel spectral information
     classifier: Classifier
-        Clasificador que nos permite determinar que si el pixel
-        es apto para agregar o no al poligono en construccion
+        Classifier that allows us to determine that if the pixel
+        is suitable for adding or not to the polygon under construction
     seen_pixels: set
-        Conjunto con las tuplas de pixeles (X_Index, Y_Index)
-        que forman que se han agregado para su posterior
-        confirmacion
+        Set with the pixel tuples (X_Index, Y_Index)
+        that form that have been added for later
+        confirmation
     confirmed_pixels: set
-        Conjunto con los pixeles en los cuales hemos asegurado
-        que pertenecen a la componente conectada
+        Set with the pixels in which we have secured
+        belonging to the connected component
 
     Return
     --------------
     new_points: list
-        Lista con la nuevas coordenadas (x, y) de los puntos
-        vecinos que cumplan la condicion para ser agregados al
-        poligono
+        List with the new coordinates (x, y) of the points
+        neighbors who meet the condition to be added to the
+        polygon
 
     """
     new_points = []
@@ -153,22 +154,22 @@ def check_hood(
 # Creacion del poligono de respuesta
 def create_polygon(pixels_selected: set, raster_path: str) -> gpd.GeoDataFrame:
     """
-    Permite transformar cada una de los indices del arreglo de
-    datos del pixel en cordenadas para posteriormente elaborar
-    el poligono respuesta
+    It allows to transform each of the indexes of the
+    pixel data in coordinates for further processing
+    the answer polygon
 
     Parameters
     --------------
     pixels_selected: set
-        Conjunto con los pixeles seleccionados para la
-        componente conectada
+        Set with the pixels selected for the
+        Connected component
     raster_path: str
-        Ruta al raster de origen
+        Route to the raster of origin
 
     Return
     --------------
-    polygon: geopandas.GeoDataFrame
-        Poligono generado a partir de los puntos
+    polygon: geopands.GeoDataFrame
+        Polygon generated from the points
 
     """
     with rio.open(raster_path) as raster:
@@ -195,33 +196,33 @@ def grow_bd_region(
     steps: int = 4,
 ):
     """
-    Genera el poligono utilizando el algoritmo de selección por umbral, el area dada    
-    y minimiza la diferencia entre el área dada por el usuario y el área cubierta por
-    el poligono generado
+    Generates the polygon using the threshold selection algorithm, the given area    
+    and minimizes the difference between the area given by the user and the area covered by
+    the generated polygon
 
     Parameters
     --------------
     pixels_indexes: numpy.ndarray
-        Arreglo con cada una de las coordenadas (X,Y) de los puntos semilla
+        Arrangement with each of the coordinates (X,Y) of the seed points
     pixels_df: pandas.DataFrame
-        Dataframe con la reflectancia espectral de los puntos semilla
+        Dataframe with the spectral reflectance of the seed points
     img_array: numpy.ndarray
-        Imagen satelital con la cual se procesa el algoritmo
+        Satellite image with which the algorithm is processed
     raster_path: str
-        Ruta al archivo .tif con la informacion del raster
+        Path to .tif file with raster information
     polygon_area: float
-        Área de referencia del poligono a generar en hectareas (ha)    
+        Reference area of the polygon to be generated in hectares (ha)    
     steps: int
-        Numero maximo de iteraciones que el algoritmo va a realizar para 
-        calcular un poligono con la menor diferencia entre valor aproximado dado
-        y el calculado
+        Maximum number of iterations that the algorithm will perform for 
+        calculate a polygon with the smallest difference between given approximate value
+        and the calculated
 
     Return
     --------------
     pixels_selected_rsp: set
-        Conjunto con los indices (X,Y) de los pixeles seleccionados
-    created_polygon_rsp: geopandas.GeoDataFrame
-        Poligono generado a partir de los puntos
+        Set with the indexes (X,Y) of the selected pixels
+    created_polygon: geopands.GeoDataFrame
+        Polygon generated from the points
 
     """
 
@@ -263,33 +264,33 @@ def grow_edr_region(
     steps: int = 4,
 ):
     """
-    Genera el poligono utilizando el algoritmo de distancia euclidea balanceando la media,
-    el area dada y minimiza la diferencia entre el área dada por el usuario y el área cubierta por
-    el poligono generado.
+    It generates the polygon using the Euclidean distance algorithm by balancing the average,
+    the given area and minimizes the difference between the area given by the user and the area covered by
+    the generated polygon.
 
     Parameters
     --------------
     pixels_indexes: numpy.ndarray
-        Arreglo con cada una de las coordenadas (X,Y) de los puntos semilla
+        Arrangement with each of the coordinates (X,Y) of the seed points
     pixels_df: pandas.DataFrame
-        Dataframe con la reflectancia espectral de los puntos semilla
+        Dataframe with the spectral reflectance of the seed points
     img_array: numpy.ndarray
-        Imagen satelital con la cual se procesa el algoritmo
+        Satellite image with which the algorithm is processed
     raster_path: str
-        Ruta al archivo .tif con la informacion del raster
+        Path to .tif file with raster information
     polygon_area: float
-        Área de referencia del poligono a generar en hectareas (ha)    
+        Reference area of the polygon to be generated in hectares (ha)    
     steps: int
-        Numero maximo de iteraciones que el algoritmo va a realizar para 
-        calcular un poligono con la menor diferencia entre valor aproximado dado
-        y el calculado
+        Maximum number of iterations the algorithm will perform for 
+        calculate a polygon with the smallest difference between given approximate value
+        and the calculated
 
     Return
     --------------
     pixels_selected_rsp: set
-        Conjunto con los indices (X,Y) de los pixeles seleccionados
-    created_polygon_rsp: geopandas.GeoDataFrame
-        Poligono generado a partir de los puntos
+        Set with the indexes (X,Y) of the selected pixels
+    created_polygon_en: geopands.GeoDataFrame
+        Polygon generated from the points
 
     """
 
@@ -330,34 +331,34 @@ def grow_balanced_region(
     steps: int = 4,
 ):
     """
-    Genera el poligono utilizando un algoritmo de crecimiento que minimiza la diferencia 
-    entre el área dada por el usuario y el área cubierta por el poligono generado.
+    Generates the polygon using a growth algorithm that minimizes the difference 
+    between the area given by the user and the area covered by the generated polygon.
 
     Parameters
     --------------
     classifier_tag: str
-        Tipo de algoritmo a utilizar
+        Type of algorithm to be used
     pixels_indexes: numpy.ndarray
-        Arreglo con cada una de las coordenadas (X,Y) de los puntos semilla
+        Arrangement with each of the coordinates (X,Y) of the seed points
     pixels_df: pandas.DataFrame
-        Dataframe con la reflectancia espectral de los puntos semilla
+        Dataframe with the spectral reflectance of the seed points
     img_array: numpy.ndarray
-        Imagen satelital con la cual se procesa el algoritmo
+        Satellite image with which the algorithm is processed
     raster_path: str
-        Ruta al archivo .tif con la informacion del raster
+        Path to .tif file with raster information
     polygon_area: float
-        Área de referencia del poligono a generar en hectareas (ha)    
+        Reference area of the polygon to be generated in hectares (ha)    
     steps: int
-        Numero maximo de iteraciones que el algoritmo va a realizar para 
-        calcular un poligono con la menor diferencia entre valor aproximado dado
-        y el calculado
+        Maximum number of iterations that the algorithm will perform for 
+        calculate a polygon with the smallest difference between given approximate value
+        and the calculated
 
     Return
     --------------
     pixels_selected_rsp: set
-        Conjunto con los indices (X,Y) de los pixeles seleccionados
-    created_polygon_rsp: geopandas.GeoDataFrame
-        Poligono generado a partir de los puntos
+        Set with the indexes (X,Y) of the selected pixels
+    created_polygon: geopands.GeoDataFrame
+        Polygon generated from the points
 
     """
     pixels_selected = None

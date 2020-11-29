@@ -1,5 +1,5 @@
 """
-Ejecucion del algoritmo para realizar Region Grow
+Execution of the algorithm to perform Region Grow
 """
 
 import numpy as np
@@ -9,17 +9,16 @@ import region_grow.functions as func
 
 class Region_Grow:
     """
-    Permite calcular la componente conectada a partir de los puntos
-    iniciales.
+    It allows to calculate the connected component from the initial points.
 
     Parameters
     --------------
     pixels_indexes: numpy.ndarray
-        Indices (X,Y) de cada uno de los pixeles semilla
+        Indexes (X,Y) of each of the seed pixels
     img_array: numpy.ndarray
-        Pixeles del raster leido
+        Pixels of the raster read
     classifier: Classifier
-        Metodo de clasificacion para decidir que pixeles vecinos agregar
+        Sorting method to decide which neighboring pixels to add
 
     """
 
@@ -34,13 +33,12 @@ class Region_Grow:
         self.classifier = classifier
 
     """
-    Computa el crecimiento de la region dado cada uno de los pixeles semilla
+    Compute the growth of the region using each of the seed pixels given
     
     Return
     --------------
     pixels_group: set
-        Conjunto con tuplas (X_Index, Y_Index) en el arreglo de lectura del raster (img_array)
-        de cada uno de los pixeles que pertenecen a la componente conectada
+        A Set with the array index (X_Index, Y_Index) for each of the seed pixels given
         
     """
 

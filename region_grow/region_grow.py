@@ -18,17 +18,17 @@ from . import region as rg
 
 def archivo_cargar(files: list):
     """
-    Permite seleccionar el archivo que va a ser cargado
+    Allows you to select the file to be loaded
 
     Parameters
     --------------
     files: list
-        Tupla con el tipo de archivo y su extension
+        Tuple with the type of file and its extension
 
     Return
     --------------
-    ruta: str
-        Ruta absoluta del archivo a cargar
+    route: str
+        Absolute path of the file to be loaded
 
     """
     root.withdraw()
@@ -38,18 +38,18 @@ def archivo_cargar(files: list):
 
 def archivo_guardar(files: list):
     """
-    Permite seleccionar el archivo qe va a ser guardado
+    Allows you to select the file to be saved
 
     Parameters
     --------------
     files: list
-        Tupla con el tipo de archivo y su extension
+        Tuple with the type of file and its extension
 
 
     Return
     --------------
-    ruta: str
-        Ruta absoluta del nuevo archivo que se va a generar
+    route: str
+        Absolute path of the new file to be generated
 
     """
     root.withdraw()
@@ -61,19 +61,19 @@ def execute(
     points_path: str, raster_path: str, shape_path: str, classifier_tag: str = "ED"
 ):
     """
-    Ejecuta el proceso para computar el crecimiento de
-    la region
+    Execute the process to compute the growth of
+    the region
 
     Parameters
     --------------
     points_path: str
-        Ruta al archivo .csv con las cordenadas de los puntos
+        Path to the .csv file with the coordinates of the points
     raster_path: str
-        Ruta al archivo .tif con la informacion del raster
+        Path to .tif file with raster information
     shape_path: str
-        Ruta para guardar el archivo .shp con los poligonos
+        Path to save the .shp file with the polygons
     classifier_tag: str
-        Tipo de clasificador para utilizar en el proceso
+        Type of classifier to be used in the process
 
     """
 
@@ -138,24 +138,24 @@ def execute_with_area(
     steps: int = 4,
 ):
     """
-    Ejecuta el proceso para computar el crecimiento de
-    la region conociendo el area aproximada del poligono que se
-    va a generar.
+    Execute the process to compute the growth of
+    the region by knowing the approximate area of the polygon that
+    is going to generate.
 
     Parameters
     --------------
     points_path: str
-        Ruta al archivo .csv con las cordenadas de los puntos
+        Path to the .csv file with the coordinates of the points
     raster_path: str
-        Ruta al archivo .tif con la informacion del raster
+        Path to .tif file with raster information
     shape_path: str
-        Ruta para guardar el archivo .shp con los poligonos
+        Path to save the .shp file with the polygons
     classifier_tag: str
-        Tipo de clasificador para utilizar en el proceso
+        Type of classifier to be used in the process
     steps: int
-        Numero maximo de iteraciones que el algoritmo va a realizar para 
-        calcular un poligono con la menor diferencia entre valor aproximado dado
-        y el calculado
+        Maximum number of iterations that the algorithm will perform for 
+        calculate a polygon with the smallest difference between given approximate value
+        and the calculated
 
     """
 
