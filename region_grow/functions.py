@@ -366,7 +366,6 @@ def grow_balanced_region(
 
     if classifier_tag == "BD":
         pixels_selected, created_polygon = grow_bd_region(
-            classifier_tag=classifier_tag,
             pixels_indexes=pixels_indexes,
             pixels_df=pixels_df,
             img_array=img_array,
@@ -376,7 +375,6 @@ def grow_balanced_region(
         )
     elif classifier_tag == "EDR":
         pixels_selected, created_polygon = grow_edr_region(
-            classifier_tag=classifier_tag,
             pixels_indexes=pixels_indexes,
             pixels_df=pixels_df,
             img_array=img_array,
