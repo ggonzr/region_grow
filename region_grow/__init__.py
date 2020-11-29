@@ -1,3 +1,3 @@
-from region_grow.region_growing import execute, execute_with_area
+from region_grow.region_grow import execute, execute_with_area
 
-__all__ = ["region_growing"]
+__all__ = ["execute", "execute_with_area"]

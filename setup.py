@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
-with open("DESCRIPTION.md") as readme_file:
+with open("README.md") as readme_file:
     README = readme_file.read()
 
 setup_args = dict(
     name="region_grow",
-    version="1.0.0",
+    version="1.0.1",
     description="Creates a new polygon locally given a set of points using a region grow algorithm approach and a satellite image in GeoTIFF format. The polygon output format is ESRI Shapefile",
     long_description_content_type="text/markdown",
     long_description=README,
