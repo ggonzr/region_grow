@@ -29,6 +29,7 @@ def archivo_cargar(files: list):
     --------------
     ruta: str
         Ruta absoluta del archivo a cargar
+
     """
     root.withdraw()
     filename = fl.askopenfilename(filetypes=files, defaultextension=files)
@@ -49,6 +50,7 @@ def archivo_guardar(files: list):
     --------------
     ruta: str
         Ruta absoluta del nuevo archivo que se va a generar
+
     """
     root.withdraw()
     filename = fl.asksaveasfilename(filetypes=files, defaultextension=files)
@@ -72,6 +74,7 @@ def execute(
         Ruta para guardar el archivo .shp con los poligonos
     classifier_tag: str
         Tipo de clasificador para utilizar en el proceso
+
     """
 
     puntos_csv = points_path
@@ -136,7 +139,8 @@ def execute_with_area(
 ):
     """
     Ejecuta el proceso para computar el crecimiento de
-    la region
+    la region conociendo el area aproximada del poligono que se
+    va a generar.
 
     Parameters
     --------------
@@ -148,6 +152,11 @@ def execute_with_area(
         Ruta para guardar el archivo .shp con los poligonos
     classifier_tag: str
         Tipo de clasificador para utilizar en el proceso
+    steps: int
+        Numero maximo de iteraciones que el algoritmo va a realizar para 
+        calcular un poligono con la menor diferencia entre valor aproximado dado
+        y el calculado
+
     """
 
     puntos_csv = points_path

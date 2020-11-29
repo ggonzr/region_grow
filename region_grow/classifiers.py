@@ -22,6 +22,7 @@ class Classifier(ABC):
         Dataframe con cada una de las reflectancias espectrales o
         indices a utilizar para los pixeles asociados a los puntos
         de entrada
+
     """
 
     @abstractmethod
@@ -31,6 +32,7 @@ class Classifier(ABC):
     """
     Define la forma en la cual el modelo de clasificación
     sera entrenado.
+
     """
 
     @abstractmethod
@@ -53,6 +55,7 @@ class Classifier(ABC):
         En caso de que el pixel cumpla con las condiciones
         propuestas para agregarlo o no a la componente
         conectada.    
+
     """
 
     @abstractmethod
@@ -76,6 +79,7 @@ class ConfidenceInterval(Classifier):
     confidence_lvl: float
         Nivel de confianza en la cual se construye el intervalo
         confidence_lvl in [0, 1)
+
     """
 
     def __init__(self, pixels_df, confidence_lvl=0.99):
@@ -87,6 +91,7 @@ class ConfidenceInterval(Classifier):
     """
     Construye un intervalo de confianza para cada una de
     las bandas o indices para usarlo como clasificación
+    
     """
 
     def fit(self):
@@ -103,12 +108,25 @@ class ConfidenceInterval(Classifier):
             response[column] = confidence_interval
         return response
 
-    """
-    Realiza la predicción de acuerdo a los valores del 
-    intervalo de confianza
-    """
-
     def predict(self, pixel):
+        """
+        Realiza la predicción de acuerdo a los valores del 
+        intervalo de confianza
+
+        Parameters
+        --------------
+        pixel: numpy.ndarray
+            Vector con cada uno de los valores de las reflectancias
+            espectrales o indices que componen el pixel
+            
+        Return
+        --------------
+        True/False: bool
+            En caso de que el pixel cumpla con las condiciones
+            propuestas para agregarlo o no a la componente
+            conectada.
+
+        """
         for banda, ic in self.intervals.items():
             indice = int(banda.split(" ")[1]) - 1
             media_indice = np.mean(pixel[indice])
@@ -140,35 +158,35 @@ class EuclideanDistance(Classifier):
         self.bands_mean = self.fit()
         self.threshold = self.threshold()
 
-    """
-    Calcula la media de cada una de las bandas presentes
-    en el conjunto de pixeles semilla (DataFrame)
-    
-    Return
-    --------------
-    bands_mean: numpy.ndarray
-        Arreglo con la media de cada una de las bandas del
-        dataframe siendo la primera posición la media de la banda 1
-    """
-
     def fit(self):
+        """
+        Calcula la media de cada una de las bandas presentes
+        en el conjunto de pixeles semilla (DataFrame)
+        
+        Return
+        --------------
+        bands_mean: numpy.ndarray
+            Arreglo con la media de cada una de las bandas del
+            dataframe siendo la primera posición la media de la banda 1
+            
+        """
         description = self.pixels_df.describe()
         numpy_mean = description.loc[["mean"]].to_numpy()
         return numpy_mean
 
-    """
-    Calcula la media de cada una de las bandas presentes
-    en el conjunto de pixeles semilla (DataFrame)
-    
-    Return
-    --------------
-    threshold: float
-        Umbral de diferencia aceptable para considerar a un pixel como
-        miembro de la componente conectada. Se calcula a partir de los
-        puntos semilla.
-    """
-
     def threshold(self):
+        """
+        Calcula la media de cada una de las bandas presentes
+        en el conjunto de pixeles semilla (DataFrame)
+        
+        Return
+        --------------
+        threshold: float
+            Umbral de diferencia aceptable para considerar a un pixel como
+            miembro de la componente conectada. Se calcula a partir de los
+            puntos semilla.
+            
+        """
         max_threshold = -100
         numpy_df = self.pixels_df.to_numpy()
         bands_mean = self.bands_mean
@@ -181,25 +199,25 @@ class EuclideanDistance(Classifier):
             max_threshold = max(max_threshold, distance)
         return max_threshold
 
-    """
-    Predice si un pixel dado se puede agregar o no
-    a la componente conectada en construcción
-    
-    Parameters
-    --------------
-    pixel: numpy.ndarray
-        Vector con cada uno de los valores de las reflectancias
-        espectrales o indices que componen el pixel
-    
-    Return
-    --------------
-    True/False: bool
-        En caso de que el pixel cumpla con las condiciones
-        propuestas para agregarlo o no a la componente
-        conectada.    
-    """
-
     def predict(self, pixel):
+        """
+        Predice si un pixel dado se puede agregar o no
+        a la componente conectada en construcción
+        
+        Parameters
+        --------------
+        pixel: numpy.ndarray
+            Vector con cada uno de los valores de las reflectancias
+            espectrales o indices que componen el pixel
+        
+        Return
+        --------------
+        True/False: bool
+            En caso de que el pixel cumpla con las condiciones
+            propuestas para agregarlo o no a la componente
+            conectada.
+
+        """
         substract = pixel - self.bands_mean
         difference = math.sqrt(np.dot(substract, np.transpose(substract)))
         # print(f'Threshold: {self.threshold}')
@@ -229,6 +247,7 @@ class EuclideanDistanceReFit(Classifier):
     refit_threshold: int
         Numero de pixeles extra a agregar antes de volver a re-entrenar
         el clasificador
+
     """
 
     def __init__(self, pixels_df: pd.DataFrame, refit_threshold: int = 3):
@@ -239,56 +258,35 @@ class EuclideanDistanceReFit(Classifier):
         self.bands_mean = self.fit()
         self.threshold = self.compute_threshold()
 
-    """
-    Calcula la media de cada una de las bandas presentes
-    en el conjunto de pixeles semilla (DataFrame)
-    
-    Return
-    --------------
-    bands_mean: numpy.ndarray
-        Arreglo con la media de cada una de las bandas del
-        dataframe siendo la primera posición la media de la banda 1
-    """
-
     def fit(self):
+        """
+        Calcula la media de cada una de las bandas presentes
+        en el conjunto de pixeles semilla (DataFrame)
+        
+        Return
+        --------------
+        bands_mean: numpy.ndarray
+            Arreglo con la media de cada una de las bandas del
+            dataframe siendo la primera posición la media de la banda 1
+            
+        """
         description = self.pixels_df.describe()
         numpy_mean = description.loc[["mean"]].to_numpy()
         return numpy_mean
 
-    """
-    Calcula la media de cada una de las bandas presentes
-    en el conjunto de pixeles semilla (DataFrame)
-    
-    Return
-    --------------
-    threshold: float
-        Umbral de diferencia aceptable para considerar a un pixel como
-        miembro de la componente conectada. Se calcula a partir de los
-        puntos semilla.
-    """
-
-    """
-    A continuacion se deja una version para computar el umbral con
-    la media, el resultado de la ejecucion, sobre el lote de test
-    (Lote 1 SIA-ASG-51300) no toma ni la mitad de los pixeles de la ejecucion
-    estandar - Solo toma 11 - por si las moscas, dejamos su implementacion aqui
-
     def compute_threshold(self):
-        max_threshold = 0
-        numpy_df = self.pixels_df.to_numpy()
-        bands_mean = self.bands_mean
-        for row in range(numpy_df.shape[0]):
-            seed_pixel = numpy_df[row, :]
-            difference = seed_pixel - bands_mean
-            # print(f'Initial Median: {np.dot(difference, np.transpose(difference))}')
-            distance = math.sqrt(np.dot(difference, np.transpose(difference)))
-            # print(f'Square Root: {distance} \n')
-            max_threshold += distance
-        rsp = 0 if numpy_df.shape[0] == 0 else max_threshold / numpy_df.shape[0]
-        return rsp
-    """
+        """
+        Calcula el umbral para determinar si un pixel debe ser
+        agrupado o no dentro del poligono a generar
+        
+        Return
+        --------------
+        threshold: float
+            Umbral de diferencia aceptable para considerar a un pixel como
+            miembro de la componente conectada. Se calcula a partir de los
+            puntos semilla.
 
-    def compute_threshold(self):
+        """
         max_threshold = -100
         numpy_df = self.pixels_df.to_numpy()
         bands_mean = self.bands_mean
@@ -305,12 +303,13 @@ class EuclideanDistanceReFit(Classifier):
         """
         Permite re-entrenar el algoritmo con los puntos clasificados
         con el fin de mejorar la precisión para encontrar pixeles similares
-        con caña y sesgarlo para lograr este objetivo
+        y sesgarlo para lograr este objetivo
 
         pixel: numpy.ndarray
             Vector con cada uno de los valores de las reflectancias
             espectrales o indices que componen el nuevo pixel que se va a agregar a la componente
             conectada.
+
         """
         self.new_pixels += 1
 
@@ -331,34 +330,31 @@ class EuclideanDistanceReFit(Classifier):
             #
             # self.threshold = self.compute_threshold()
 
-    """
-    Predice si un pixel dado se puede agregar o no
-    a la componente conectada en construcción
-    
-    Parameters
-    --------------
-    pixel: numpy.ndarray
-        Vector con cada uno de los valores de las reflectancias
-        espectrales o indices que componen el pixel
-    
-    Return
-    --------------
-    True/False: bool
-        En caso de que el pixel cumpla con las condiciones
-        propuestas para agregarlo o no a la componente
-        conectada.    
-    """
-
     def predict(self, pixel):
+        """
+        Determina si el pixel debe ser agregado al poligono 
+        realizando la predicción de acuerdo a la diferencia
+        de la banda con la media de los pixeles semilla para esa banda.
+
+        Parameters
+        --------------
+        pixel: numpy.ndarray
+            Reflectancia espectral del pixel a analizar
+
+        Return
+        --------------
+        True/False: bool
+            En caso de que el pixel cumpla con las condiciones
+            propuestas para agregarlo o no a la componente
+            conectada.
+            
+        """
         substract = pixel - self.bands_mean
         difference = math.sqrt(np.dot(substract, np.transpose(substract)))
         is_true = True if difference <= self.threshold else False
         if is_true:
             self.refit(pixel=pixel)
         return is_true
-
-    def test_df(self):
-        return self.pixels_df
 
 
 # Clasificador de pixeles mediante umbral definido por el usuario
@@ -382,6 +378,7 @@ class BandThreshold(Classifier):
     band_threshold: float
         Umbral de similitud a calcular por cada banda
         band_threshold in [0, 1)
+
     """
 
     def __init__(self, pixels_df, band_threshold=0.10):
@@ -394,6 +391,7 @@ class BandThreshold(Classifier):
         """
         Permite entrenar el metodo de clasificacion y calcular
         el umbral de aceptación por cada una de las bandas.
+
         """
         # Seleccion del primer pixel
         if len(self.pixels_df) > 1:
@@ -415,12 +413,25 @@ class BandThreshold(Classifier):
             threshold_intervals.append((band - th, band + th))
         return threshold_intervals
 
-    """
-    Realiza la predicción de acuerdo a los valores del umbral
-    para cada una de las bandas
-    """
-
     def predict(self, pixel):
+        """
+        Determina si el pixel debe ser agregado al poligono 
+        realizando la predicción de acuerdo a los valores del umbral
+        para cada una de las bandas
+
+        Parameters
+        --------------
+        pixel: numpy.ndarray
+            Reflectancia espectral del pixel a analizar
+
+        Return
+        --------------
+        True/False: bool
+            En caso de que el pixel cumpla con las condiciones
+            propuestas para agregarlo o no a la componente
+            conectada.
+            
+        """
         for band in range(len(self.intervals)):
             low_boundary, upper_boundary = self.intervals[band]
             if not (low_boundary <= pixel[band] <= upper_boundary):
@@ -438,17 +449,24 @@ def select_classifier(classifier_tag: str) -> Classifier:
     --------------
     classifier_tag: str
         Tag que define cada uno de los clasificadores registrados
+
         ED: Distancia Euclideana - EuclideanDistance
+            Calcula la distancia euclidea entre la banda del pixel a analizar y
+            la media del umbral aceptado
         CI: Intervalo de Confianza sobre la media - ConfidenceInterval
+            Realiza un intervalo de confianza como manera de determinar el
+            umbral de aceptación
         EDR: Distancia euclideana que recomputa la media de las bandas
-             despues de X-pixeles nuevos agregados a la componente conectada
-             EuclideanDistanceReFit.
+            despues de X-pixeles nuevos agregados a la componente conectada
+            EuclideanDistanceReFit.
         BD: Umbral para una banda de un único pixel semilla - BandThreshold
             Se define un umbral +- para definir el rango aceptado por banda
+            
     Return
     --------------
     rg_classifier: Classifier
         Referencia a la clase del clasificador a instanciar
+
     """
     switcher = {
         "ED": EuclideanDistance,
@@ -469,16 +487,19 @@ def select_balanced_classifier(classifier_tag: str) -> Classifier:
     Parameters
     --------------
     classifier_tag: str
-        Tag que define cada uno de los clasificadores registrados        
+        Tag que define cada uno de los clasificadores registrados  
+
         EDR: Distancia euclideana que recomputa la media de las bandas
-             despues de X-pixeles nuevos agregados a la componente conectada
-             EuclideanDistanceReFit.
+            despues de X-pixeles nuevos agregados a la componente conectada
+            EuclideanDistanceReFit.
         BD: Umbral para una banda de un único pixel semilla - BandThreshold
             Se define un umbral +- para definir el rango aceptado por banda
+
     Return
     --------------
     rg_classifier: Classifier
         Referencia a la clase del clasificador a instanciar
+
     """
     switcher = {
         "EDR": EuclideanDistanceReFit,

@@ -41,6 +41,7 @@ class Region_Grow:
     pixels_group: set
         Conjunto con tuplas (X_Index, Y_Index) en el arreglo de lectura del raster (img_array)
         de cada uno de los pixeles que pertenecen a la componente conectada
+        
     """
 
     def grow(self):
